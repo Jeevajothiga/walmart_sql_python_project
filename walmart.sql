@@ -1,33 +1,33 @@
 -- Walmart Project Queries - MySQL
 
-SELECT * FROM walmart;
+SELECT * FROM walmart_table;
 
 -- DROP TABLE walmart;
 
 -- DROP TABLE walmart;
 
 -- Count total records
-SELECT COUNT(*) FROM walmart;
+SELECT COUNT(*) FROM walmart_table;
 
 -- Count payment methods and number of transactions by payment method
 SELECT 
     payment_method,
     COUNT(*) AS no_payments
-FROM walmart
+FROM walmart_table
 GROUP BY payment_method;
 
 -- Count distinct branches
-SELECT COUNT(DISTINCT branch) FROM walmart;
+SELECT COUNT(DISTINCT branch) FROM walmart_table;
 
 -- Find the minimum quantity sold
-SELECT MIN(quantity) FROM walmart;
+SELECT MIN(quantity) FROM walmart_table;
 
 -- Business Problem Q1: Find different payment methods, number of transactions, and quantity sold by payment method
 SELECT 
     payment_method,
     COUNT(*) AS no_payments,
     SUM(quantity) AS no_qty_sold
-FROM walmart
+FROM walmart_table
 GROUP BY payment_method;
 
 -- Project Question #2: Identify the highest-rated category in each branch
@@ -39,7 +39,7 @@ FROM (
         category,
         AVG(rating) AS avg_rating,
         RANK() OVER(PARTITION BY branch ORDER BY AVG(rating) DESC) AS rank
-    FROM walmart
+    FROM walmart_table
     GROUP BY branch, category
 ) AS ranked
 WHERE rank = 1;
@@ -52,7 +52,7 @@ FROM (
         DAYNAME(STR_TO_DATE(date, '%d/%m/%Y')) AS day_name,
         COUNT(*) AS no_transactions,
         RANK() OVER(PARTITION BY branch ORDER BY COUNT(*) DESC) AS rank
-    FROM walmart
+    FROM walmart_table
     GROUP BY branch, day_name
 ) AS ranked
 WHERE rank = 1;
@@ -71,14 +71,14 @@ SELECT
     MIN(rating) AS min_rating,
     MAX(rating) AS max_rating,
     AVG(rating) AS avg_rating
-FROM walmart
+FROM walmart_table
 GROUP BY city, category;
 
 -- Q6: Calculate the total profit for each category
 SELECT 
     category,
     SUM(unit_price * quantity * profit_margin) AS total_profit
-FROM walmart
+FROM walmart_table
 GROUP BY category
 ORDER BY total_profit DESC;
 
@@ -89,7 +89,7 @@ WITH cte AS (
         payment_method,
         COUNT(*) AS total_trans,
         RANK() OVER(PARTITION BY branch ORDER BY COUNT(*) DESC) AS rank
-    FROM walmart
+    FROM walmart_table
     GROUP BY branch, payment_method
 )
 SELECT branch, payment_method AS preferred_payment_method
@@ -105,7 +105,7 @@ SELECT
         ELSE 'Evening'
     END AS shift,
     COUNT(*) AS num_invoices
-FROM walmart
+FROM walmart_table
 GROUP BY branch, shift
 ORDER BY branch, num_invoices DESC;
 
@@ -114,7 +114,7 @@ WITH revenue_2022 AS (
     SELECT 
         branch,
         SUM(total) AS revenue
-    FROM walmart
+    FROM walmart_table
     WHERE YEAR(STR_TO_DATE(date, '%d/%m/%Y')) = 2022
     GROUP BY branch
 ),
@@ -122,7 +122,7 @@ revenue_2023 AS (
     SELECT 
         branch,
         SUM(total) AS revenue
-    FROM walmart
+    FROM walmart_table
     WHERE YEAR(STR_TO_DATE(date, '%d/%m/%Y')) = 2023
     GROUP BY branch
 )
